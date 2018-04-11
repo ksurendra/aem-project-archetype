@@ -9,29 +9,27 @@ This archetype creates a minimal Adobe Experience Manager project as starting po
 This project has a number features that are intended to offer a convenient starting point for new projects:
 
 * 2 Pages
-  * English and French pages with filler text
-* 2 Templates
-  * For homepage and content pages
-  * Homepages are only allowed on top level, and content pages below
+  * English and French pages with example content
+
+* One content template based on the editable template feature
+  * Example content policy
+
 * Page component
-  * Built with Sightly templates and simple server-side JavaScript logic
-  * The CSS class on the body element changes based on page template
-  * Internationalized footer text as example
-* Structure Components
-  * Topnav: simple custom Sightly component
-  * Logo: based on foundation
+  * Based on the [page AEM Core WCM Component](https://github.com/Adobe-Marketing-Cloud/aem-core-wcm-components/tree/master/content/src/content/jcr_root/apps/core/wcm/components/page/v1/page)
+  * customfooterlibs.html and customheaderlibs.html snippet to load additional JS and CSS clientlibs according to the {cssId} property
 * Content Components
-  * helloworld: example of custom Sightly component with SlingModels for the logic
-  * colctrl, textimage, text, image, title: use the Sightly foundation components
+  * Example: helloworld example of custom HTL component with SlingModels for the logic
+  * breadcrumb, image, list, sharing, text and title use the latest released version of the [AEM Core WCM Components](https://github.com/Adobe-Marketing-Cloud/aem-core-wcm-components) with the recommended proxy pattern 
+* Form Components
+  * button, container, hidden, options and text based on the AEM Core WCM Components
+
 * Configurations
   * Device emulators displayed in the authoring interface
-  * Allow direct drag & drop of assets from the content finder into parsys (6.1 TouchUI)
-  * Dictionnary structure for internationalizing hardcoded strings
+  * Allow direct drag & drop of assets from the content finder into layout container (6.3 TouchUI)
+  * Dictionary structure for internationalizing hardcoded strings
 * Client libraries
-  * Responsive layout with colctr that break for narrow pages
   * CSS class names follow BEM naming conventions
   * Component-specific styles stored within each component
-  * Master ClientLib under /etc/designs merges all client libraries into one file
 * Bundle with some examples
   * Models: Models for more complex business logic of components
   * Servlets: Rendering the output of specific requests
@@ -41,6 +39,18 @@ This project has a number features that are intended to offer a convenient start
   * Unit tests
   * Integration tests
   * Client-side Hobbes tests within developer mode
+  
+  
+## Provided Maven profiles
+The generated maven project support different deployment profiles when running the Maven install goal `mvn install` within the reactor.
+
+Id                        | Description
+--------------------------|------------------------------
+autoInstallBundle         | Install core bundle with the maven-sling-plugin to the felix console
+autoInstallPackage        | Install the ui.content and ui.apps content package with the content-package-maven-plugin to the package manager to default author instance on localhost, port 4502. Hostname and port can be changed with the aem.host and aem.port user defined properties. 
+autoInstallPackagePublish | Install the ui.content and ui.apps content package with the content-package-maven-plugin to the package manager to default publish instance on localhost, port 4503. Hostname and port can be changed with the aem.host and aem.port user defined properties.
+
+The profile `integrationTests` is also available for the verify goal, to run the provided integration tests on the AEM instance.  
 
 ## Usage
 
@@ -50,13 +60,13 @@ Either use the [AEM Eclipse extension](https://docs.adobe.com/docs/en/dev-tools/
 
 Or use your mvn skills:
 
-    mvn archetype:generate \
+    mvn org.apache.maven.plugins:maven-archetype-plugin:2.4:generate \
      -DarchetypeGroupId=com.adobe.granite.archetypes \
      -DarchetypeArtifactId=aem-project-archetype \
-     -DarchetypeVersion=10 \
-     -DarchetypeRepository=https://repo.adobe.com/nexus/content/groups/public/
+     -DarchetypeVersion=13 \
+     -DarchetypeCatalog=https://repo.adobe.com/nexus/content/groups/public/
 
-Where 10 is the archetype version number that you want to use.
+Where 12 is the archetype version number that you want to use (see archetype versions below).
 
 ### Available properties
 
@@ -70,14 +80,31 @@ appsFolderName     | /apps folder name
 artifactName       | Maven Project Name
 componentGroupName | AEM component group name
 contentFolderName  | /content folder name
+confFolderName     | /conf folder name
 cssId              | prefix used in generated css
 packageGroup       | Content Package Group name
 siteName           | AEM site name
 
 ### Requirements
 
-* Adobe Experience Manager 6 or higher
-* Apache Maven (3.x should do)
+The latest version of the archetype has the following requirements
+
+* Adobe Experience Manager 6.3 or higher
+* Apache Maven (3.3.9 or newer)
+
+See below for support for older versions of AEM.
+
+Archetype Version | AEM Version
+------------------|-------------
+7                 | 6.0 or newer
+8                 | 6.0 or newer
+9                 | 6.0 or newer
+10                | 6.0 or newer
+11                | 6.2 or newer
+12                | 6.3 or newer
+13                | 6.4, 6.3 + SP1 + CFP2 + FP20593 + FP20696 \*
+
+\* The AEM 6.3 requirements of Archetype Version 13 will be consolidated with the release of AEM 6.3 SP2.
 
 ## Building
 
@@ -91,4 +118,7 @@ Then change to the directory in which you want to create the project and run:
     mvn archetype:generate \
      -DarchetypeGroupId=com.adobe.granite.archetypes \
      -DarchetypeArtifactId=aem-project-archetype \
-     -DarchetypeVersion=11-SNAPSHOT
+     -DarchetypeVersion=14-SNAPSHOT
+     
+     
+Side note: The profile "adobe-public" must be activated when using profiles like "autoInstallPackage" mentioned above.
