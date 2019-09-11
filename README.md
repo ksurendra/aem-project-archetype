@@ -1,10 +1,12 @@
 # AEM project archetype
 
-[![Build Status](https://travis-ci.org/Adobe-Marketing-Cloud/aem-project-archetype.svg?branch=master)](https://travis-ci.org/Adobe-Marketing-Cloud/aem-project-archetype)
+[![CircleCI](https://circleci.com/gh/adobe/aem-project-archetype.svg?style=svg)](https://circleci.com/gh/adobe/aem-project-archetype)
 
 ![](https://raw.githubusercontent.com/wiki/adobe-marketing-cloud/aem-project-archetype/screenshots/archetype.png)
 
-This archetype creates a minimal Adobe Experience Manager project as starting point for your own projects. The properties that must be provided when using this archetype allow to name as desired all parts of this project.
+This archetype creates a minimal Adobe Experience Manager project as a starting point for your own projects. The properties that must be provided when using this archetype allow to name as desired all parts of this project.
+
+See the [Getting Started with AEM Sites - WKND Tutorial](https://docs.adobe.com/content/help/en/experience-manager-learn/getting-started-wknd-tutorial-develop/overview.html) on the Adobe Help Center website for an example of how to use it.
 
 This project has a number features that are intended to offer a convenient starting point for new projects:
 
@@ -15,11 +17,13 @@ This project has a number features that are intended to offer a convenient start
   * Example content policy
 
 * Page component
-  * Based on the [page AEM Core WCM Component](https://github.com/Adobe-Marketing-Cloud/aem-core-wcm-components/tree/master/content/src/content/jcr_root/apps/core/wcm/components/page/v1/page)
+  * Based on the [AEM Sites Core Component page](https://github.com/adobe/aem-core-wcm-components/tree/master/content/src/content/jcr_root/apps/core/wcm/components/page/v1/page)
   * customfooterlibs.html and customheaderlibs.html snippet to load additional JS and CSS clientlibs according to the {cssId} property
 * Content Components
   * Example: helloworld example of custom HTL component with SlingModels for the logic
-  * breadcrumb, image, list, sharing, text and title use the latest released version of the [AEM Core WCM Components](https://github.com/Adobe-Marketing-Cloud/aem-core-wcm-components) with the recommended proxy pattern 
+  * accordion, breadcrumb, button, carousel, container, content fragment, content fragment list, download, 
+  experience fragment, image, language navigation, list, navigation, sharing, tabs, teaser, text and title 
+  use the latest released version of the [AEM Sites Core Components](https://github.com/adobe/aem-core-wcm-components) with the recommended proxy pattern 
 * Form Components
   * button, container, hidden, options and text based on the AEM Core WCM Components
 
@@ -60,51 +64,48 @@ Either use the [AEM Eclipse extension](https://docs.adobe.com/docs/en/dev-tools/
 
 Or use your mvn skills:
 
-    mvn org.apache.maven.plugins:maven-archetype-plugin:2.4:generate \
+    mvn archetype:generate \
      -DarchetypeGroupId=com.adobe.granite.archetypes \
      -DarchetypeArtifactId=aem-project-archetype \
-     -DarchetypeVersion=13 \
-     -DarchetypeCatalog=https://repo.adobe.com/nexus/content/groups/public/
+     -DarchetypeVersion=20
 
-Where 12 is the archetype version number that you want to use (see archetype versions below).
+Where 20 is the archetype version number that you want to use (see archetype versions below).
 
 ### Available properties
 
-groupId            | Maven GroupId
--------------------|------------------------------
-groupId            | Base Maven groupId
-artifactId         | Base Maven ArtifactId
-version            | Version
-package            | Java Source Package
-appsFolderName     | /apps folder name
-artifactName       | Maven Project Name
-componentGroupName | AEM component group name
-contentFolderName  | /content folder name
-confFolderName     | /conf folder name
-cssId              | prefix used in generated css
-packageGroup       | Content Package Group name
-siteName           | AEM site name
+Name                        | Default | Description
+----------------------------|---------|--------------------
+groupId                     |         | Base Maven groupId
+artifactId                  |         | Base Maven ArtifactId
+version                     |         | Version
+package                     |         | Java Source Package
+appsFolderName              |         | /apps folder name
+artifactName                |         | Maven Project Name
+componentGroupName          |         | AEM component group name
+contentFolderName           |         | /content folder name
+confFolderName              |         | /conf folder name
+cssId                       |         | prefix used in generated css
+packageGroup                |         | Content Package Group name
+siteName                    |         | AEM site name
+optionAemVersion            |  6.5.0  | Target AEM version
+optionIncludeExamples       |    y    | Include a Component Library example site
+optionIncludeErrorHandler   |    n    | Include a custom 404 response page
+optionIncludeFrontendModule |    n    | Include a dedicated frontend module
+
+Note: If the archetype is executed in interactive mode the first time properties with default values can't be changed (see 
+[ARCHETYPE-308](https://issues.apache.org/jira/browse/ARCHETYPE-308) for more details). The value can be changed when the property 
+confirmation at the end is denied and the questionnaire gets repeated, or by passing the parameter in the command line (e.g. 
+`-DoptionIncludeExamples=n`).
 
 ### Requirements
 
-The latest version of the archetype has the following requirements
+The latest version of the archetype has the following requirements:
 
-* Adobe Experience Manager 6.3 or higher
+* Adobe Experience Manager 6.3.3.0 or higher
 * Apache Maven (3.3.9 or newer)
+* Adobe Public Maven Repository in maven settings, see [Knowledge Base](https://helpx.adobe.com/experience-manager/kb/SetUpTheAdobeMavenRepository.html) article for details.
 
-See below for support for older versions of AEM.
-
-Archetype Version | AEM Version
-------------------|-------------
-7                 | 6.0 or newer
-8                 | 6.0 or newer
-9                 | 6.0 or newer
-10                | 6.0 or newer
-11                | 6.2 or newer
-12                | 6.3 or newer
-13                | 6.4, 6.3 + SP1 + CFP2 + FP20593 + FP20696 \*
-
-\* The AEM 6.3 requirements of Archetype Version 13 will be consolidated with the release of AEM 6.3 SP2.
+For a list of supported AEM versions of previous archetype versions, see [historical supported AEM versions](VERSIONS.md).
 
 ## Building
 
@@ -112,13 +113,11 @@ To compile and use an edge, local version of this archetype:
 
     mvn clean install
 
-
 Then change to the directory in which you want to create the project and run:
 
     mvn archetype:generate \
      -DarchetypeGroupId=com.adobe.granite.archetypes \
      -DarchetypeArtifactId=aem-project-archetype \
-     -DarchetypeVersion=14-SNAPSHOT
-     
-     
-Side note: The profile "adobe-public" must be activated when using profiles like "autoInstallPackage" mentioned above.
+     -DarchetypeVersion=21-SNAPSHOT
+
+Note: The profile "adobe-public" must be activated when using profiles like "autoInstallPackage" mentioned above.
