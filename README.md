@@ -1,123 +1,89 @@
-# AEM project archetype
+# AEM Project Archetype
 
 [![CircleCI](https://circleci.com/gh/adobe/aem-project-archetype.svg?style=svg)](https://circleci.com/gh/adobe/aem-project-archetype)
 
-![](https://raw.githubusercontent.com/wiki/adobe-marketing-cloud/aem-project-archetype/screenshots/archetype.png)
+Maven template that creates a minimal, best-practices-based Adobe Experience Manager (AEM) project as a starting point for your website.
 
-This archetype creates a minimal Adobe Experience Manager project as a starting point for your own projects. The properties that must be provided when using this archetype allow to name as desired all parts of this project.
+## Documentation
 
-See the [Getting Started with AEM Sites - WKND Tutorial](https://docs.adobe.com/content/help/en/experience-manager-learn/getting-started-wknd-tutorial-develop/overview.html) on the Adobe Help Center website for an example of how to use it.
+* **[Archetype Documentation](https://www.adobe.com/go/aem_archetype):** Overview of the archetype architecture and its different modules.
+* Following tutorials are based off this archetype:
+  - **[WKND Site](https://docs.adobe.com/content/help/en/experience-manager-learn/getting-started-wknd-tutorial-develop/overview.html):** Learn how to start a fresh new website.
+  - **[WKND Single Page App](https://helpx.adobe.com/experience-manager/kt/sites/using/getting-started-spa-wknd-tutorial-develop.html):** Learn how to build a React or Angular webapp that is fully authorable in AEM.
 
-This project has a number features that are intended to offer a convenient starting point for new projects:
+## Features
 
-* 2 Pages
-  * English and French pages with example content
-
-* One content template based on the editable template feature
-  * Example content policy
-
-* Page component
-  * Based on the [AEM Sites Core Component page](https://github.com/adobe/aem-core-wcm-components/tree/master/content/src/content/jcr_root/apps/core/wcm/components/page/v2/page)
-  * customfooterlibs.html and customheaderlibs.html snippet to load additional JS and CSS clientlibs according to the {cssId} property
-* Content Components
-  * Example: helloworld example of custom HTL component with SlingModels for the logic
-  * accordion, breadcrumb, button, carousel, container, content fragment, content fragment list, download, 
-  experience fragment, image, language navigation, list, navigation, sharing, tabs, teaser, text and title 
-  use the latest released version of the [AEM Sites Core Components](https://github.com/adobe/aem-core-wcm-components) with the recommended proxy pattern 
-* Form Components
-  * button, container, hidden, options and text based on the AEM Core WCM Components
-
-* Configurations
-  * Device emulators displayed in the authoring interface
-  * Allow direct drag & drop of assets from the content finder into layout container (6.3 TouchUI)
-  * Dictionary structure for internationalizing hardcoded strings
-* Client libraries
-  * CSS class names follow BEM naming conventions
-  * Component-specific styles stored within each component
-* Bundle with some examples
-  * Models: Models for more complex business logic of components
-  * Servlets: Rendering the output of specific requests
-  * Filters: Applied to the requests before dispatching to the servlet or script
-  * Schedulers: Cron-job like tasks
-* Tests
-  * Unit tests
-  * Integration tests
-  * Client-side Hobbes tests within developer mode
-  
-  
-## Provided Maven profiles
-The generated maven project support different deployment profiles when running the Maven install goal `mvn install` within the reactor.
-
-Id                        | Description
---------------------------|------------------------------
-autoInstallBundle         | Install core bundle with the maven-sling-plugin to the felix console
-autoInstallPackage        | Install the ui.content and ui.apps content package with the content-package-maven-plugin to the package manager to default author instance on localhost, port 4502. Hostname and port can be changed with the aem.host and aem.port user defined properties. 
-autoInstallPackagePublish | Install the ui.content and ui.apps content package with the content-package-maven-plugin to the package manager to default publish instance on localhost, port 4503. Hostname and port can be changed with the aem.host and aem.port user defined properties.
-
-The profile `integrationTests` is also available for the verify goal, to run the provided integration tests on the AEM instance.  
+* **Best Practice:** Bootstrap your site with all of Adobe's latest recommended practices.
+* **Low-Code:** Edit your templates, create content, deploy your CSS, and your site is ready for go-live.
+* **Cloud-Ready:** If desired, use [AEM as a Cloud Service](https://docs.adobe.com/content/help/en/experience-manager-cloud-service/landing/home.html) to go-live in few days and ease scalability and maintenance.
+* **Dispatcher:** A project is complete only with a [Dispatcher configuration](https://docs.adobe.com/content/help/en/experience-manager-dispatcher/using/dispatcher.html) that ensures speed and security.
+* **Multi-Site:** If needed, the archetype generates the content structure for a [multi-language and multi-region setup](https://docs.adobe.com/content/help/en/experience-manager-65/administering/introduction/msm.html).
+* **Core Components:** Authors can create nearly any layout with our versatile [set of standardized components](https://github.com/adobe/aem-core-wcm-components).
+* **Editable Templates:** Assemble virtually any [template without code](https://docs.adobe.com/content/help/en/experience-manager-learn/sites/page-authoring/template-editor-feature-video-use.html), and define what the authors are allowed to edit.
+* **Responsive Layout:** On templates or individual pages, [define how the elements reflow](https://docs.adobe.com/content/help/en/experience-manager-65/authoring/siteandpage/responsive-layout.html) for the defined breakpoints.
+* **Header and Footer:** Assemble and localize them without code, using the [localization features of the components](https://docs.adobe.com/content/help/en/experience-manager-core-components/using/get-started/localization.html).
+* **Style System:** Avoid building custom components by allowing authors to [apply different styles](https://docs.adobe.com/content/help/en/experience-manager-learn/getting-started-wknd-tutorial-develop/style-system.html) to them.
+* **Front-End Build:** Front-end devs can [mock AEM pages](https://docs.adobe.com/content/help/en/experience-manager-core-components/using/developing/archetype/uifrontend.html#webpack-dev-server) and [build client libraries](https://docs.adobe.com/content/help/en/experience-manager-core-components/using/developing/archetype/uifrontend.html) with Webpack, TypeScript, and SASS.
+* **WebApp-Ready:** For sites using [React](https://docs.adobe.com/content/help/en/experience-manager-core-components/using/developing/archetype/uifrontend-react.html) or [Angular](https://docs.adobe.com/content/help/en/experience-manager-core-components/using/developing/archetype/uifrontend-angular.html), use the [SPA SDK](https://docs.adobe.com/content/help/en/experience-manager-64/developing/headless/spas/spa-architecture.html) to retain [in-context authoring of the app](https://docs.adobe.com/content/help/en/experience-manager-learn/sites/spa-editor/spa-editor-framework-feature-video-use.html).
+* **Example Code:** Checkout the HelloWorld component, and the sample models, servelets, filters, and schedulers.
+* **Open Sourced:** If something is not as it should, [contribute](https://github.com/adobe/aem-core-wcm-components/blob/master/CONTRIBUTING.md) your improvements!
 
 ## Usage
 
-To use a released version of this archetype:
+To generate a project, adjust the following command line to your needs:
 
-Either use the [AEM Eclipse extension](https://docs.adobe.com/docs/en/dev-tools/aem-eclipse.html) and follow the New Project wizard (choosing AEM Sample Multi-Module Project)...
+* Set `aemVersion=cloud` for [AEM as a Cloud Service](https://docs.adobe.com/content/help/en/experience-manager-cloud-service/landing/home.html);  
+ Set `aemVersion=6.5.0` for [Adobe Managed Services](https://github.com/adobe/aem-project-archetype/tree/master/src/main/archetype/dispatcher.ams), or on-premise.
+ The Core Components dependency is only added for non cloud aem versions as the Core Components are provided OOTB for AEM as a Cloud 
+ Service.
+* Adjust `appTitle="My Site"` to define the website title and components groups.
+* Adjust `appId="mysite"` to define the Maven artifactId, the component, config and content folder names, as well as client library names.
+* Adjust `groupId="com.mysite"` to define the Maven groupId and the Java Source Package.
+* Lookup the list of available properties to see if there's more you want to adjust.
 
-Or use your mvn skills:
+```
+mvn -B archetype:generate \
+ -D archetypeGroupId=com.adobe.granite.archetypes \
+ -D archetypeArtifactId=aem-project-archetype \
+ -D archetypeVersion=23 \
+ -D aemVersion=cloud \
+ -D appTitle="My Site" \
+ -D appId="mysite" \
+ -D groupId="com.mysite" \
+ -D frontendModule=general \
+ -D includeExamples=n
+```
 
-    mvn archetype:generate \
-     -DarchetypeGroupId=com.adobe.granite.archetypes \
-     -DarchetypeArtifactId=aem-project-archetype \
-     -DarchetypeVersion=20
+## Available Properties
 
-Where 20 is the archetype version number that you want to use (see archetype versions below).
+Name                      | Default        | Description
+--------------------------|----------------|--------------------
+`appTitle`                |                | Application title, will be used for website title and components groups (e.g. `"My Site"`).
+`appId`                   |                | Technical name, will be used for component, config and content folder names, as well as client library names (e.g. `"mysite"`).
+`artifactId`              | *`${appId}`*   | Base Maven artifact ID (e.g. `"mysite"`).
+`groupId`                 |                | Base Maven group ID (e.g. `"com.mysite"`).
+`package`                 | *`${groupId}`* | Java Source Package (e.g. `"com.mysite"`).
+`version`                 | `1.0-SNAPSHOT` | Project version (e.g. `1.0-SNAPSHOT`).
+`aemVersion`              | `6.5.0`        | Target AEM version (can be `cloud` for [AEM as a Cloud Service](https://docs.adobe.com/content/help/en/experience-manager-cloud-service/landing/home.html); or `6.5.0`, `6.4.4`, or `6.3.3` for [Adobe Managed Services](https://github.com/adobe/aem-project-archetype/tree/master/src/main/archetype/dispatcher.ams) or on-premise).
+`sdkVersion`              | `latest`       | When `aemVersion=cloud` an [SDK](https://docs.adobe.com/content/help/en/experience-manager-cloud-service/implementing/developing/aem-as-a-cloud-service-sdk.html) version can be specified (e.g. `2020.02.2265.20200217T222518Z-200130`).
+`includeDispatcherConfig` | `y`            | Includes a dispatcher configuration either for cloud or for AMS/on-premise, depending of the value of `aemVersion` (can be `y` or `n`).
+`frontendModule`          | `none`         | Includes a Webpack frontend build module that generates the client libraries (can be `general` or `none` for regular sites; can be `angular` or `react` for a Single Page App that implements the [SPA Editor](https://docs.adobe.com/content/help/en/experience-manager-65/developing/headless/spas/spa-overview.html)).
+`languageCountry`         | `en_us`        | Language and country code to create the content structure from (e.g. `en_us`).
+`singleCountry`           | `y`            | Includes a language-master content structure (can be `y`, or `n`).
+`includeExamples`         | `y`            | Includes a [Component Library](https://www.aemcomponents.dev/) example site (can be `y`, or `n`).
+`includeErrorHandler`     | `n`            | Includes a custom 404 response page that will be global to the entire instance (can be `y` or `n`).
 
-### Available properties
+## System Requirements
 
-Name                        | Default | Description
-----------------------------|---------|--------------------
-groupId                     |         | Base Maven groupId
-artifactId                  |         | Base Maven ArtifactId
-version                     |         | Version
-package                     |         | Java Source Package
-appsFolderName              |         | /apps folder name
-artifactName                |         | Maven Project Name
-componentGroupName          |         | AEM component group name
-contentFolderName           |         | /content folder name
-confFolderName              |         | /conf folder name
-cssId                       |         | prefix used in generated css
-packageGroup                |         | Content Package Group name
-siteName                    |         | AEM site name
-optionAemVersion            |  6.5.0  | Target AEM version
-optionIncludeExamples       |    y    | Include a Component Library example site
-optionIncludeErrorHandler   |    n    | Include a custom 404 response page
-optionIncludeFrontendModule |    n    | Include a dedicated frontend module
+Archetype | AEM as a Cloud Service | AEM 6.5 | AEM 6.4 | AEM 6.3 | Java SE | Maven
+---------|---------|---------|---------|---------|---------|---------
+[23](https://github.com/adobe/aem-project-archetype/releases/tag/aem-project-archetype-23) | Continual | 6.5.0.0+ | 6.4.4.0+ | 6.3.3.4+ | 8, 11 | 3.3.9+
 
-Note: If the archetype is executed in interactive mode the first time properties with default values can't be changed (see 
-[ARCHETYPE-308](https://issues.apache.org/jira/browse/ARCHETYPE-308) for more details). The value can be changed when the property 
-confirmation at the end is denied and the questionnaire gets repeated, or by passing the parameter in the command line (e.g. 
-`-DoptionIncludeExamples=n`).
+Setup your local development environment for [AEM as a Cloud Service SDK](https://docs.adobe.com/content/help/en/experience-manager-learn/cloud-service/local-development-environment-set-up/overview.html) or for [older versions of AEM](https://docs.adobe.com/content/help/en/experience-manager-learn/foundation/development/set-up-a-local-aem-development-environment.html).
 
-### Requirements
+### Known Issues
 
-The latest version of the archetype has the following requirements:
+When running on Windows and generating the dispatcher configuration, you should be running in an elevated command prompt or the Windows Subsystem for Linux (see [#329](https://github.com/adobe/aem-project-archetype/issues/329)).
 
-* Adobe Experience Manager 6.3.3.0 or higher
-* Apache Maven (3.3.9 or newer)
-* Adobe Public Maven Repository in maven settings, see [Knowledge Base](https://helpx.adobe.com/experience-manager/kb/SetUpTheAdobeMavenRepository.html) article for details.
-
-For a list of supported AEM versions of previous archetype versions, see [historical supported AEM versions](VERSIONS.md).
-
-## Building
-
-To compile and use an edge, local version of this archetype:
-
-    mvn clean install
-
-Then change to the directory in which you want to create the project and run:
-
-    mvn archetype:generate \
-     -DarchetypeGroupId=com.adobe.granite.archetypes \
-     -DarchetypeArtifactId=aem-project-archetype \
-     -DarchetypeVersion=21-SNAPSHOT
-
-Note: The profile "adobe-public" must be activated when using profiles like "autoInstallPackage" mentioned above.
+When executing the archetype in interactive mode (without the `-B` parameter), the properties with default values cannot be changed, unless the final confirmation gets dismissed, which then repeats the questions by including the properties with default values in the questions (see
+[ARCHETYPE-308](https://issues.apache.org/jira/browse/ARCHETYPE-308) for details).

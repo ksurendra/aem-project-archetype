@@ -32,15 +32,8 @@
     <!-- ====================================================================== -->
     <artifactId>${artifactId}</artifactId>
     <packaging>content-package</packaging>
-    <name>${artifactName} - UI apps</name>
-    <description>UI apps package for ${artifactName}</description>
-
-    <!-- <scm>
-        <connection></connection>
-        <developerConnection></developerConnection>
-        <url></url>
-        <tag>HEAD</tag>
-    </scm-->
+    <name>${appTitle} - UI apps</name>
+    <description>UI apps package for ${appTitle}</description>
 
     <!-- ====================================================================== -->
     <!-- B U I L D   D E F I N I T I O N                                        -->
@@ -56,28 +49,60 @@
                 <artifactId>filevault-package-maven-plugin</artifactId>
                 <extensions>true</extensions>
                 <configuration>
-                    <group>${packageGroup}</group>
+                    <group>${groupId}</group>
+                    <name>${artifactId}</name>
+                    <packageType>application</packageType>
+                    <accessControlHandling>merge</accessControlHandling>
+                    <properties>
+                        <cloudManagerTarget>none</cloudManagerTarget>
+                    </properties>
+                    <repositoryStructurePackages>
+                        <repositoryStructurePackage>
+                            <groupId>${groupId}</groupId>
+                            <artifactId>${rootArtifactId}.ui.apps.structure</artifactId>
+                        </repositoryStructurePackage>
+                    </repositoryStructurePackages>
                     <embeddeds>
+#if ( $aemVersion != "cloud" )
+                        <embedded>
+                            <groupId>com.adobe.cq</groupId>
+                            <artifactId>core.wcm.components.core</artifactId>
+                            <target>/apps/${appId}/install</target>
+                        </embedded>
                         <embedded>
                             <groupId>${groupId}</groupId>
                             <artifactId>${rootArtifactId}.core</artifactId>
-                            <target>/apps/${appsFolderName}/install</target>
+                            <target>/apps/${appId}/install</target>
                         </embedded>
+#end
+#if ( $isSpaProject )
+                        <embedded>
+                            <groupId>com.adobe.aem</groupId>
+                            <artifactId>spa.project.core.core</artifactId>
+                            <target>/apps/${appId}/install</target>
+                        </embedded>
+#end
                     </embeddeds>
                     <subPackages>
+#if ( $isSpaProject )
                         <subPackage>
-                            <groupId>com.adobe.cq</groupId>
-                            <artifactId>core.wcm.components.all</artifactId>
-                            <filter>true</filter>
-                        </subPackage>
-#if ( $optionIncludeExamples == "y" )
-                        <subPackage>
-                            <groupId>com.adobe.cq</groupId>
-                            <artifactId>core.wcm.components.examples</artifactId>
-                            <filter>true</filter>
+                            <groupId>com.adobe.aem</groupId>
+                            <artifactId>spa.project.core.all</artifactId>
                         </subPackage>
 #end
                     </subPackages>
+#if ( $aemVersion != "cloud" )
+                    <dependencies>
+                        <dependency>
+                            <groupId>com.adobe.cq</groupId>
+                            <artifactId>core.wcm.components.content</artifactId>
+                        </dependency>
+                        <dependency>
+                            <groupId>com.adobe.cq</groupId>
+                            <artifactId>core.wcm.components.config</artifactId>
+                        </dependency>
+                    </dependencies>
+#end
                 </configuration>
             </plugin>
             <plugin>
@@ -93,6 +118,25 @@
             <plugin>
                 <groupId>org.apache.sling</groupId>
                 <artifactId>htl-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>validate-htl-scripts</id>
+                        <goals>
+                            <goal>validate</goal>
+                        </goals>
+                        <phase>generate-sources</phase>
+                        <configuration>
+                            <generateJavaClasses>true</generateJavaClasses>
+                            <generatedJavaClassesPrefix>org.apache.sling.scripting.sightly</generatedJavaClassesPrefix>
+                            <allowedExpressionOptions>
+                                <allowedExpressionOption>cssClassName</allowedExpressionOption>
+                                <allowedExpressionOption>decoration</allowedExpressionOption>
+                                <allowedExpressionOption>decorationTagName</allowedExpressionOption>
+                                <allowedExpressionOption>wcmmode</allowedExpressionOption>
+                            </allowedExpressionOptions>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
@@ -104,7 +148,53 @@
         <dependency>
             <groupId>${groupId}</groupId>
             <artifactId>${rootArtifactId}.core</artifactId>
-            <version>${version}</version>
+            <version>${project.version}</version>
+        </dependency>
+
+#if ( $frontendModule != "none" )
+        <dependency>
+            <groupId>${groupId}</groupId>
+            <artifactId>${rootArtifactId}.ui.frontend</artifactId>
+            <version>${project.version}</version>
+            <type>zip</type>
+        </dependency>
+#end
+
+#if ( $isSpaProject )
+        <!-- SPA Project Core (includes hierarchy page) -->
+        <dependency>
+            <groupId>com.adobe.aem</groupId>
+            <artifactId>spa.project.core.all</artifactId>
+            <type>zip</type>
+        </dependency>
+        <dependency>
+            <groupId>com.adobe.aem</groupId>
+            <artifactId>spa.project.core.core</artifactId>
+        </dependency>
+#end
+        <dependency>
+            <groupId>${groupId}</groupId>
+            <artifactId>${rootArtifactId}.ui.apps.structure</artifactId>
+            <version>${project.version}</version>
+            <type>zip</type>
+        </dependency>
+
+#if ( $aemVersion != "cloud" )
+        <dependency>
+            <groupId>com.adobe.cq</groupId>
+            <artifactId>core.wcm.components.core</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.adobe.cq</groupId>
+            <artifactId>core.wcm.components.content</artifactId>
+            <type>zip</type>
+        </dependency>
+
+        <dependency>
+            <groupId>com.adobe.cq</groupId>
+            <artifactId>core.wcm.components.config</artifactId>
+            <type>zip</type>
         </dependency>
 
         <dependency>
@@ -113,18 +203,6 @@
             <classifier>apis</classifier>
         </dependency>
 
-        <dependency>
-            <groupId>com.adobe.cq</groupId>
-            <artifactId>core.wcm.components.all</artifactId>
-            <type>zip</type>
-        </dependency>
-#if ( $optionIncludeExamples == "y" )
-        <dependency>
-            <groupId>com.adobe.cq</groupId>
-            <artifactId>core.wcm.components.examples</artifactId>
-            <type>zip</type>
-        </dependency>
-#end
         <dependency>
             <groupId>javax.jcr</groupId>
             <artifactId>jcr</artifactId>
@@ -138,6 +216,25 @@
         <dependency>
             <groupId>com.day.cq.wcm</groupId>
             <artifactId>cq-wcm-taglib</artifactId>
+        </dependency>
+#else
+        <dependency>
+            <groupId>com.adobe.aem</groupId>
+            <artifactId>aem-sdk-api</artifactId>
+        </dependency>
+#end
+        <!-- HTL dependencies needed for the HTL Maven Plugin source code generation -->
+        <dependency>
+            <groupId>org.apache.sling</groupId>
+            <artifactId>org.apache.sling.scripting.sightly.compiler</artifactId>
+            <version>1.2.4-1.4.0</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.sling</groupId>
+            <artifactId>org.apache.sling.scripting.sightly.runtime</artifactId>
+            <version>1.2.0-1.4.0</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 </project>

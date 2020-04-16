@@ -20,10 +20,13 @@
 
     <requiredProperties>
         <!--
-            This is the folder under /apps into which the bundle and package content will be installed.
+            This is the id of the application and will be used for
+              * artifact id
+              * /apps, /content and /conf subfolders
+              * CSS ids
         -->
-        <requiredProperty key="appsFolderName">
-            <validationRegex>^[a-zA-Z0-9\-_]+$</validationRegex>
+        <requiredProperty key="appId">
+            <validationRegex>^[a-zA-Z0-9\-]+$</validationRegex>
         </requiredProperty>
         <!--
             Maven artifact groupId for all projects
@@ -35,79 +38,92 @@
             Maven artifact "root" artifactId, is suffixed for the individual modules
         -->
         <requiredProperty key="artifactId">
-            <defaultValue>${groupId}.${appsFolderName}</defaultValue>
+            <defaultValue>${appId}</defaultValue>
             <validationRegex>^[a-zA-Z0-9\.\-_]+$</validationRegex>
         </requiredProperty>
         <!--
-           This is the name which will be set as the artifact name and used to derive the bundle
-           and package names.
+            Maven version
         -->
-        <requiredProperty key="artifactName">
-            <defaultValue>${appsFolderName}</defaultValue>
+        <requiredProperty key="version">
+            <defaultValue>1.0.0-SNAPSHOT</defaultValue>
+            <validationRegex>^[a-zA-Z0-9\.\-]+$</validationRegex>
         </requiredProperty>
-            <!--
-               This is the group identifier for the package. Used with the
-               Package Manager and Package Share.
-            -->
-        <requiredProperty key="packageGroup">
-        	<defaultValue>${appsFolderName}</defaultValue>
-            <validationRegex>^[a-zA-Z0-9\-_]+$</validationRegex>
-        </requiredProperty>
-        <requiredProperty key="contentFolderName">
-            <defaultValue>${appsFolderName}</defaultValue>
-            <validationRegex>^[a-zA-Z0-9\-_]+$</validationRegex>
-        </requiredProperty>
-        <requiredProperty key="confFolderName">
-            <defaultValue>${appsFolderName}</defaultValue>
-            <validationRegex>^[a-zA-Z0-9\-_]+$</validationRegex>
-        </requiredProperty>
-        <requiredProperty key="cssId">
-            <defaultValue>${appsFolderName}</defaultValue>
-            <validationRegex>^[a-zA-Z0-9\-_]+$</validationRegex>
-        </requiredProperty>
-        <requiredProperty key="componentGroupName">
-            <defaultValue>${appsFolderName}</defaultValue>
-            <validationRegex>^[a-zA-Z0-9\.\-_]+$</validationRegex>
-        </requiredProperty>
-        <requiredProperty key="siteName">
-            <defaultValue>${appsFolderName}</defaultValue>
-        </requiredProperty>
-
         <!--
-            *** Feature Flags ***
+            This is the human-readable title for the project
         -->
+        <requiredProperty key="appTitle"/>
+        <!--
+            ISO 639-1 language / country code to create initial content structure
+         -->
+        <requiredProperty key="languageCountry">
+            <defaultValue>en_us</defaultValue>
+            <validationRegex>[a-z]{2,3}_[a-z]{2,3}</validationRegex>
+        </requiredProperty>
+        <!--
+            Option to create language master structure in example content package
+         -->
+        <requiredProperty key="singleCountry">
+            <defaultValue>y</defaultValue>
+            <validationRegex>^(y|n)$</validationRegex>
+        </requiredProperty>
         <!--
             Option to set target AEM version.
         -->
-        <requiredProperty key="optionAemVersion">
+        <requiredProperty key="aemVersion">
             <defaultValue>6.5.0</defaultValue>
-            <validationRegex>^(6\.3\.3|6\.4\.4|6\.5\.0)$</validationRegex>
+            <validationRegex>^(6\.3\.3|6\.4\.4|6\.5\.0|cloud)$</validationRegex>
+        </requiredProperty>
+        <!--
+            AEM as a Cloud Service SDK API version.
+        -->
+        <requiredProperty key="sdkVersion">
+            <defaultValue>latest</defaultValue>
+            <validationRegex>^(\d{4}\.\d{2}\.\d{4}\.\d{8}T\d{6}Z-\d{6}|latest)$</validationRegex>
         </requiredProperty>
         <!--
             Option to include Component Library examples as subpackage in the
             ui.apps content package.
         -->
-        <requiredProperty key="optionIncludeExamples">
+        <requiredProperty key="includeExamples">
             <defaultValue>y</defaultValue>
             <validationRegex>^(y|n)$</validationRegex>
         </requiredProperty>
         <!--
             Option to include server wide error handler for 404 response code
          -->
-        <requiredProperty key="optionIncludeErrorHandler">
+        <requiredProperty key="includeErrorHandler">
             <defaultValue>n</defaultValue>
             <validationRegex>^(y|n)$</validationRegex>
         </requiredProperty>
         <!--
             Option to include a dedicated frontend module
          -->
-        <requiredProperty key="optionIncludeFrontendModule">
-            <defaultValue>n</defaultValue>
+        <requiredProperty key="frontendModule">
+            <defaultValue>none</defaultValue>
+            <validationRegex>^(none|general|angular|react)$</validationRegex>
+        </requiredProperty>
+
+        <!--
+            Option to include one of the Dispatcher configuration modules.
+        -->
+        <requiredProperty key="includeDispatcherConfig">
+            <defaultValue>y</defaultValue>
             <validationRegex>^(y|n)$</validationRegex>
         </requiredProperty>
     </requiredProperties>
 
     <modules>
+        <module id="${rootArtifactId}.all" dir="all" name="all">
+            <fileSets>
+                <fileSet filtered="true" packaged="false"
+                         encoding="UTF-8">
+                    <directory>src/main/content</directory>
+                    <includes>
+                        <include>**/*.*</include>
+                    </includes>
+                </fileSet>
+            </fileSets>
+        </module>
         <module id="${rootArtifactId}.core" dir="core" name="core">
             <fileSets>
                 <fileSet filtered="true" packaged="true"
@@ -126,27 +142,158 @@
                 </fileSet>
             </fileSets>
         </module>
-        <module id="${rootArtifactId}.ui.frontend" dir="ui.frontend" name="ui.frontend">
+        <module id="${rootArtifactId}.dispatcher.ams" dir="dispatcher.ams" name="dispatcher.ams">
+            <fileSets>
+                <fileSet filtered="true" packaged="false" encoding="UTF-8">
+                    <directory></directory>
+                    <includes>
+                        <include>**/*.conf</include>
+                        <include>**/*.vhost</include>
+                        <include>**/*.rules</include>
+                        <include>**/*.vars</include>
+                        <include>**/*.any</include>
+                        <include>**/*.farm</include>
+                        <include>assembly.xml</include>
+                    </includes>
+                </fileSet>
+                <fileSet filtered="false" packaged="false" encoding="UTF-8">
+                    <directory></directory>
+                    <includes>
+                        <include>**/magic</include>
+                        <include>**/README*</include>
+                    </includes>
+                </fileSet>
+            </fileSets>
+        </module>
+        <module id="${rootArtifactId}.dispatcher.cloud" dir="dispatcher.cloud" name="dispatcher.cloud">
+            <fileSets>
+                <fileSet filtered="true" packaged="false" encoding="UTF-8">
+                    <directory></directory>
+                    <includes>
+                        <include>**/*.conf</include>
+                        <include>**/*.vhost</include>
+                        <include>**/*.rules</include>
+                        <include>**/*.vars</include>
+                        <include>**/*.any</include>
+                        <include>**/*.farm</include>
+                        <include>assembly.xml</include>
+                    </includes>
+                </fileSet>
+                <fileSet filtered="false" packaged="false" encoding="UTF-8">
+                    <directory></directory>
+                    <includes>
+                        <include>**/README*</include>
+                    </includes>
+                </fileSet>
+            </fileSets>
+        </module>
+        <module id="${rootArtifactId}.ui.frontend.general" dir="ui.frontend.general" name="ui.frontend.general">
             <fileSets>
                 <fileSet filtered="true" encoding="UTF-8">
                     <directory></directory>
                     <includes>
-                        <include>.babelrc</include>
-                        <include>.gitignore</include>
-                        <include>clientlib.config.js</include>
-                        <include>package.json</include>
-                        <include>tsconfig.json</include>
-                        <include>tslint.json</include>
-                        <include>webpack.common.js</include>
-                        <include>webpack.dev.js</include>
-                        <include>webpack.prod.js</include>
+                        <include>**/*</include>
+                    </includes>
+                    <excludes>
+                        <!-- Exclude Node.js installation (frontend-maven-plugin) -->
+                        <exclude>**/node/</exclude>
+                        <!-- Exclude NPM dependencies -->
+                        <exclude>**/node_modules/</exclude>
+                        <exclude>**/package-lock.json</exclude>
+                        <exclude>**/yarn.lock</exclude>
+                        <!-- Do not filter binary files (will become corrupted) -->
+                        <exclude>**/*.gif</exclude>
+                        <exclude>**/*.ico</exclude>
+                        <exclude>**/*.jpeg</exclude>
+                        <exclude>**/*.jpg</exclude>
+                        <exclude>**/*.png</exclude>
+                        <exclude>**/*.svg</exclude>
+                    </excludes>
+                </fileSet>
+                <fileSet filtered="false">
+                    <directory></directory>
+                    <includes>
+                        <!-- Do not filter binary files (will become corrupted) -->
+                        <include>**/*.gif</include>
+                        <include>**/*.ico</include>
+                        <include>**/*.jpeg</include>
+                        <include>**/*.jpg</include>
+                        <include>**/*.png</include>
+                        <include>**/*.svg</include>
                     </includes>
                 </fileSet>
-                <fileSet filtered="false" packaged="false"
-                         encoding="UTF-8">
-                    <directory>src/main/webpack</directory>
+            </fileSets>
+        </module>
+        <module id="${rootArtifactId}.ui.frontend.angular" dir="ui.frontend.angular" name="ui.frontend.angular">
+            <fileSets>
+                <fileSet filtered="true" encoding="UTF-8">
+                    <directory></directory>
                     <includes>
                         <include>**/*</include>
+                    </includes>
+                    <excludes>
+                        <!-- Exclude Node.js installation (frontend-maven-plugin) -->
+                        <exclude>**/node/</exclude>
+                        <!-- Exclude NPM dependencies -->
+                        <exclude>**/node_modules/</exclude>
+                        <exclude>**/package-lock.json</exclude>
+                        <exclude>**/yarn.lock</exclude>
+                        <!-- Do not filter binary files (will become corrupted) -->
+                        <exclude>**/*.gif</exclude>
+                        <exclude>**/*.ico</exclude>
+                        <exclude>**/*.jpeg</exclude>
+                        <exclude>**/*.jpg</exclude>
+                        <exclude>**/*.png</exclude>
+                        <exclude>**/*.svg</exclude>
+                    </excludes>
+                </fileSet>
+                <fileSet filtered="false">
+                    <directory></directory>
+                    <includes>
+                        <!-- Do not filter binary files (will become corrupted) -->
+                        <include>**/*.gif</include>
+                        <include>**/*.ico</include>
+                        <include>**/*.jpeg</include>
+                        <include>**/*.jpg</include>
+                        <include>**/*.png</include>
+                        <include>**/*.svg</include>
+                    </includes>
+                </fileSet>
+            </fileSets>
+        </module>
+        <module id="${rootArtifactId}.ui.frontend.react" dir="ui.frontend.react" name="ui.frontend.react">
+            <fileSets>
+                <fileSet filtered="true" encoding="UTF-8">
+                    <directory></directory>
+                    <includes>
+                        <include>**/*</include>
+                    </includes>
+                    <excludes>
+                        <!-- Exclude Node.js installation (frontend-maven-plugin) -->
+                        <exclude>**/node/</exclude>
+                        <!-- Exclude NPM dependencies -->
+                        <exclude>**/node_modules/</exclude>
+                        <exclude>**/package-lock.json</exclude>
+                        <exclude>**/yarn.lock</exclude>
+                        <!-- Do not filter binary files (will become corrupted) -->
+                        <exclude>**/*.gif</exclude>
+                        <exclude>**/*.ico</exclude>
+                        <exclude>**/*.jpeg</exclude>
+                        <exclude>**/*.jpg</exclude>
+                        <exclude>**/*.png</exclude>
+                        <exclude>**/*.svg</exclude>
+                    </excludes>
+                </fileSet>
+                <fileSet filtered="false">
+                    <directory></directory>
+                    <includes>
+                        <!-- Do not filter binary files (will become corrupted) -->
+                        <include>**/*.gif</include>
+                        <include>**/*.ico</include>
+                        <include>**/*.jpeg</include>
+                        <include>**/*.jpg</include>
+                        <include>**/*.png</include>
+                        <include>**/*.svg</include>
                     </includes>
                 </fileSet>
             </fileSets>
@@ -163,12 +310,13 @@
                     encoding="UTF-8">
                     <directory>src/main/content</directory>
                     <includes>
-                        <include>**/*.*</include>
+                        <include>**/*</include>
                     </includes>
                     <excludes>
                         <exclude>**/*.png</exclude>
+                        <exclude>**/*.jpeg</exclude>
                         <exclude>**/image</exclude>
-                        <exclude>**/file</exclude>
+                        <exclude>**/original</exclude>
                     </excludes>
                 </fileSet>
                 <fileSet filtered="false" packaged="false"
@@ -176,15 +324,9 @@
                     <directory>src/main/content</directory>
                     <includes>
                         <include>**/*.png</include>
+                        <include>**/*.jpeg</include>
                         <include>**/image</include>
-                        <include>**/file</include>
-                    </includes>
-                </fileSet>
-                <fileSet filtered="false" packaged="false"
-                    encoding="UTF-8">
-                    <directory>src/main/content/jcr_root</directory>
-                    <includes>
-                        <include>**/*</include>
+                        <include>**/original</include>
                     </includes>
                 </fileSet>
             </fileSets>
@@ -195,12 +337,13 @@
                     encoding="UTF-8">
                     <directory>src/main/content</directory>
                     <includes>
-                        <include>**/*.*</include>
+                        <include>**/*</include>
                     </includes>
                     <excludes>
                         <exclude>**/*.png</exclude>
+                        <exclude>**/*.jpeg</exclude>
                         <exclude>**/image</exclude>
-                        <exclude>**/file</exclude>
+                        <exclude>**/original</exclude>
                     </excludes>
                 </fileSet>
                 <fileSet filtered="false" packaged="false"
@@ -210,13 +353,10 @@
                         <include>**/*.png</include>
                         <include>**/image</include>
                         <include>**/file</include>
-                    </includes>
-                </fileSet>
-                <fileSet filtered="false" packaged="false"
-                    encoding="UTF-8">
-                    <directory>src/main/content/jcr_root</directory>
-                    <includes>
-                        <include>**/*</include>
+                        <include>**/*.png</include>
+                        <include>**/*.jpeg</include>
+                        <include>**/image</include>
+                        <include>**/original</include>
                     </includes>
                 </fileSet>
             </fileSets>
@@ -239,20 +379,13 @@
                 </fileSet>
             </fileSets>
         </module>
-        <module id="${rootArtifactId}.it.launcher" dir="it.launcher" name="it.launcher">
+        <module id="${rootArtifactId}.ui.apps.structure" dir="ui.apps.structure" name="ui.apps.structure">
             <fileSets>
-                <fileSet filtered="true" packaged="true"
-                    encoding="UTF-8">
-                    <directory>src/main/java</directory>
+                <fileSet filtered="true" packaged="false"
+                         encoding="UTF-8">
+                    <directory>src/main/content</directory>
                     <includes>
-                        <include>**/*.java</include>
-                    </includes>
-                </fileSet>
-                <fileSet filtered="true" packaged="true"
-                    encoding="UTF-8">
-                    <directory>src/test/java</directory>
-                    <includes>
-                        <include>**/*.java</include>
+                        <include>**/*.*</include>
                     </includes>
                 </fileSet>
             </fileSets>
@@ -264,12 +397,13 @@
       <directory></directory>
       <includes>
         <include>README.md</include>
+        <include>.gitignore</include>
       </includes>
     </fileSet>
-    <fileSet encoding="UTF-8">
+    <fileSet filtered="true" encoding="UTF-8">
       <directory></directory>
       <includes>
-        <include>.gitignore</include>
+        <include>archetype.properties</include>
       </includes>
     </fileSet>
   </fileSets>

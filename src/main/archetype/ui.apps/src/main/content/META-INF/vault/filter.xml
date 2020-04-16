@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <workspaceFilter version="1.0">
-    <filter root="/apps/${appsFolderName}"/>
-#if ( $optionIncludeErrorHandler == "y" )
+    <filter root="/apps/${appId}"/>
+#if ( $includeErrorHandler == "y" )
     <filter root="/apps/sling" />
+#end
+#if ( $singleCountry  == "n" )
+    <filter root="/apps/msm/${appId}_blueprint" mode="merge"/>
 #end
 </workspaceFilter>

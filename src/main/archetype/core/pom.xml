@@ -24,8 +24,8 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>${artifactId}</artifactId>
-    <name>${artifactName} - Core</name>
-    <description>Core bundle for ${artifactName}</description>
+    <name>${appTitle} - Core</name>
+    <description>Core bundle for ${appTitle}</description>
     <build>
         <plugins>
             <plugin>
@@ -43,13 +43,7 @@
                         </goals>
                         <configuration>
                             <bnd><![CDATA[
-#set( $startbrace = "{" )
-#set( $endbrace = "}" )
-Bundle-Category: ${componentGroupName}
--exportcontents: $${startbrace}packages;VERSIONED${endbrace}
-Sling-Model-Packages: ${package}.core.models
--snapshot: $${startbrace}tstamp;yyyyMMddHHmmssSSS${endbrace}
-Bundle-DocURL:
+Import-Package: javax.annotation;version=0.0.0,*
                                 ]]></bnd>
                         </configuration>
                     </execution>
@@ -87,6 +81,12 @@ Bundle-DocURL:
     </build>
 
     <dependencies>
+        <dependency>
+            <groupId>uk.org.lidalia</groupId>
+            <artifactId>slf4j-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+#if ( $aemVersion != "cloud" )
         <!-- OSGi Dependencies -->
         <dependency>
             <groupId>org.osgi</groupId>
@@ -142,14 +142,33 @@ Bundle-DocURL:
             <artifactId>javax.servlet-api</artifactId>
         </dependency>
         <dependency>
+            <groupId>javax.annotation</groupId>
+            <artifactId>javax.annotation-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.sling</groupId>
+            <artifactId>org.apache.sling.servlets.annotations</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.adobe.aem</groupId>
             <artifactId>uber-jar</artifactId>
             <classifier>apis</classifier>
         </dependency>
         <dependency>
+            <groupId>com.adobe.cq</groupId>
+            <artifactId>core.wcm.components.core</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.apache.sling</groupId>
             <artifactId>org.apache.sling.models.api</artifactId>
         </dependency>
+#else
+        <dependency>
+            <groupId>com.adobe.aem</groupId>
+            <artifactId>aem-sdk-api</artifactId>
+        </dependency>
+#end
+        <!-- Testing -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
@@ -168,14 +187,12 @@ Bundle-DocURL:
         <dependency>
             <groupId>junit-addons</groupId>
             <artifactId>junit-addons</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>io.wcm</groupId>
             <artifactId>io.wcm.testing.aem-mock.junit5</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>uk.org.lidalia</groupId>
-            <artifactId>slf4j-test</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 </project>
